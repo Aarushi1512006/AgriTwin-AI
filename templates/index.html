@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AgriTwin AI</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+:root{--g:#2e7d32;--g2:#66bb6a;--bg:#eef5ea;--t:#1d2b1f;--m:#6b7a6c}
+*{box-sizing:border-box}body{margin:0;font:15px/1.4 system-ui,"Segoe UI",sans-serif;background:var(--bg);color:var(--t)}
+#hero{position:relative;height:230px;overflow:hidden;color:#fff;background:linear-gradient(#4fa3e0,#bfe3f7 70%,#e8f6ff);transition:background 1s}
+#hero.rainy{background:linear-gradient(#56657a,#8b9bb0 70%,#b9c6d3)}
+#hero h1{position:absolute;z-index:5;left:28px;top:26px;margin:0;font-size:34px;text-shadow:0 2px 8px #0005}
+#hero p{position:absolute;z-index:5;left:30px;top:74px;margin:0;opacity:.95;text-shadow:0 1px 4px #0006;max-width:560px}
+.sun{position:absolute;right:90px;top:26px;width:70px;height:70px;border-radius:50%;background:#ffd54f;box-shadow:0 0 0 14px #ffd54f44,0 0 60px 30px #ffe08288;animation:pulse 4s infinite}
+.rainy .sun{opacity:0}
+.cloud{position:absolute;width:120px;height:36px;border-radius:30px;background:#fffd;box-shadow:30px -14px 0 4px #fffd,-26px -8px 0 -2px #fffd;animation:drift 40s linear infinite}
+.rainy .cloud{background:#5d6b7d;box-shadow:30px -14px 0 4px #5d6b7d,-26px -8px 0 -2px #5d6b7d}
+.c2{top:90px;animation-duration:60s;transform:scale(.7)}
+.rain{position:absolute;inset:0;display:none;z-index:3}.rainy .rain{display:block}
+.rain i,.drop{position:absolute;width:2px;height:16px;background:#cfe9ff;animation:fall .9s linear infinite}
+#hero svg{position:absolute;bottom:-1px;left:0;width:100%;height:110px;z-index:2}
+@keyframes drift{from{left:-160px}to{left:105%}}@keyframes pulse{50%{transform:scale(1.07)}}
+@keyframes fall{from{transform:translateY(-20px);opacity:0}30%{opacity:1}to{transform:translateY(230px);opacity:.3}}
+main{display:grid;grid-template-columns:310px 1fr;gap:18px;padding:18px;max-width:1380px;margin:-34px auto 0;position:relative;z-index:6}
+@media(max-width:950px){main{grid-template-columns:1fr}}
+.card{background:#fff;border-radius:18px;padding:16px;box-shadow:0 6px 22px #1b4d2a1f;margin-bottom:16px}
+.card h3{margin:0 0 8px;font-size:16px}
+aside .card{position:sticky;top:12px}
+label{display:block;font-size:12px;color:var(--m);margin-top:8px}input,select{width:100%;padding:7px;border:1px solid #cfdccf;border-radius:8px;background:#fafdf9}
+.prow{border-top:1px dashed #cfdccf;margin-top:10px;padding-top:2px}
+button{background:linear-gradient(135deg,var(--g),var(--g2));color:#fff;border:0;border-radius:10px;padding:9px 14px;margin:8px 6px 0 0;cursor:pointer;font-weight:600;box-shadow:0 3px 8px #2e7d3244;transition:.2s}
+button:hover{transform:translateY(-2px)}button.alt{background:#8a9a8c;box-shadow:none}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:16px}
+.kpi{background:#fff;border-radius:16px;padding:12px 14px;box-shadow:0 6px 22px #1b4d2a1f;border-left:5px solid var(--g2)}
+.kpi b{display:block;font-size:24px}.kpi span{font-size:12px;color:var(--m)}
+.map{width:100%;height:auto;border-radius:18px;display:block}
+.tile{cursor:pointer;transition:.2s}.tile:hover{filter:brightness(1.08)}
+.tile.critical .pl,.tile.low .pl{filter:grayscale(.85) sepia(.5);opacity:.75}
+.pl{font-size:15px;text-anchor:middle}
+.rip{fill:none;stroke:#4fc3f7;stroke-width:2;transform-box:fill-box;transform-origin:center;animation:rip 1.8s infinite}.rip.d2{animation-delay:.9s}
+@keyframes rip{from{transform:scale(1);opacity:.95}to{transform:scale(6);opacity:0}}
+.badge{padding:2px 10px;border-radius:12px;color:#fff;font-size:12px;font-weight:600}
+.critical{--c:#c62828}.low{--c:#ef6c00}.adequate{--c:#2e7d32}.excess{--c:#1565c0}.badge{background:var(--c)}
+.head{display:flex;align-items:center;gap:14px}.head .t{flex:1}
+.act{font-weight:700;font-size:15px;margin:4px 0;color:var(--c)}
+ul{margin:4px 0;padding-left:18px}li.crit{color:#c62828}li.warn{color:#ef6c00}
+table{width:100%;border-collapse:collapse;font-size:12px;margin:6px 0}td,th{padding:4px 6px;border-bottom:1px solid #eef;text-align:right}td:first-child,th:first-child{text-align:left}tr.best{background:#e8f5e9;font-weight:700}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}@media(max-width:800px){.two{grid-template-columns:1fr}}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(430px,1fr));gap:16px}@media(max-width:560px){.grid{grid-template-columns:1fr}}
+.note{font-size:12px;color:var(--m)}.flash{animation:fl 1.2s}@keyframes fl{30%{box-shadow:0 0 0 4px #66bb6a}}
+</style></head><body>
+<div id="hero"><div class="sun"></div><div class="cloud" style="top:40px;left:20%"></div><div class="cloud c2" style="left:60%"></div><div class="rain" id="rain"></div>
+<h1>🌱 AgriTwin AI</h1><p>Smart-agriculture digital twin: virtual farm · simulated IoT · AI moisture forecast · what-if irrigation</p>
+<svg viewBox="0 0 1200 110" preserveAspectRatio="none"><path d="M0 70 Q200 10 420 60 T820 50 T1200 40 V110 H0Z" fill="#7cc35f"/><path d="M0 90 Q300 40 600 85 T1200 70 V110 H0Z" fill="#4e9a3f"/></svg></div>
+<main>
+<aside><div class="card"><h3>1 · Farmer input</h3>
+<label>Farm name</label><input id="name" value="Demo Farm">
+<label>Farm size (hectares)</label><input id="size" type="number" step="0.1" value="1">
+<label>Water available (litres/day)</label><input id="water" type="number" value="100000">
+<div id="plots"></div>
+<button onclick="addPlot()" class="alt">+ Plot</button><button onclick="example()" class="alt">Load example</button>
+<button onclick="createFarm()">🚜 Create virtual farm</button><div id="err" style="color:#c62828"></div>
+<p class="note">All sensors, weather and irrigation effects are simulated. No real equipment is controlled.</p></div></aside>
+<section id="dash" hidden>
+<div class="kpis" id="kpis"></div>
+<div class="card"><div class="head"><h3 class="t" id="fname"></h3><button onclick="advance()">Apply recommendations &amp; advance 24 h ▶</button></div><div id="map"></div><div class="note" id="model"></div></div>
+<div class="two"><div class="card"><h3>🔔 Alerts</h3><ul id="alerts"></ul></div><div class="card"><h3>🌦 Next 24 h weather (simulated)</h3><canvas id="wx" height="110"></canvas></div></div>
+<div class="grid" id="cards"></div></section>
+</main>
+<script src="/static/app.js"></script></body></html>
